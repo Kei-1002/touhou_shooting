@@ -6,7 +6,6 @@ import random as r
 # --- 設定 ---
 SCREEN_WIDTH, SCREEN_HEIGHT = 600, 800
 FPS = 60
-tfmove=0
 
 # --- クラス定義 ---
 
@@ -22,11 +21,7 @@ class Enemy(pygame.sprite.Sprite):
         self.move_timer = 0
         self.max_hp = 5000
         self.hp = 5000
-    #def update(self, *args):
-        #左右に移動
-        #if tfmove == 1:
-            #self.move_timer += 0.05
-            #self.rect.centerx = 300 + math.sin(self.move_timer) * r.randint(100,130)
+        self.last_phase = 0  # 弾消し判定用のフェーズ管理
 
 class Bullet(pygame.sprite.Sprite):
     images = {}
@@ -34,7 +29,6 @@ class Bullet(pygame.sprite.Sprite):
     def __init__(self, x, y, angle, speed, img_file, scale_x, scale_y, xway=1, index=0, interval=15):
         super().__init__()
         
-        # 画像の読み込みとキャッシュ
         if img_file not in Bullet.images:
             try:
                 img = pygame.image.load(img_file).convert_alpha()
@@ -43,24 +37,12 @@ class Bullet(pygame.sprite.Sprite):
                 Bullet.images[img_file] = pygame.Surface((10, 10))
                 Bullet.images[img_file].fill((255, 0, 0))
 
-        # --- 角度補正ロジック ---
         if xway is None or xway <= 0:
-            # xwayが指定されていない場合は、そのままの角度
             final_angle = angle
         else:
-            if xway % 2 == 1:
-                # 【奇数Way：自機狙い】
-                # indexが中央の値の時に angle ぴったりになる
-                offset_angle = (xway - 1) * interval / 2.0
-                final_angle = angle - offset_angle + (index * interval)
-            else:
-                # 【偶数Way：自機外し】
-                # 中央が空くように、intervalの半分(0.5)ずらして計算する
-                # index=0,1 の時に自機を左右に挟む形になる
-                offset_angle = (xway - 1) * interval / 2.0
-                final_angle = angle - offset_angle + (index * interval)
+            offset_angle = (xway - 1) * interval / 2.0
+            final_angle = angle - offset_angle + (index * interval)
 
-        # メンバ変数の設定
         self.image = pygame.transform.rotate(Bullet.images[img_file], -final_angle - 90)
         self.rect = self.image.get_rect(center=(x, y))
         self.pos_x, self.pos_y = float(x), float(y)
@@ -74,8 +56,13 @@ class Bullet(pygame.sprite.Sprite):
         if not (0 <= self.pos_x <= SCREEN_WIDTH and 0 <= self.pos_y <= SCREEN_HEIGHT):
             self.kill()
 
-
-
+# 弾を消す際の処理を管理するクラス
+class KillEffect:
+    @staticmethod
+    def clear_bullets(enemy_bullets):
+        """現在の画面上の敵弾をすべて消去する"""
+        for b in enemy_bullets:
+            b.kill()
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, all_sprites, player_shots):
@@ -133,7 +120,6 @@ def main():
     
     frame_count = 0
 
-
     while True:
         screen.fill((0, 0, 40))
         keys = pygame.key.get_pressed()
@@ -144,17 +130,29 @@ def main():
 
         frame_count += 1
         
-
-        
-        
-            
-# --- 敵の弾幕パターン切り替え (スペルカードシステム) ---
+        # --- 敵の弾幕パターン & フェーズ切り替え判定 ---
         tracex = player.rect.centerx - enemy.rect.centerx
         tracey = player.rect.centery - enemy.rect.centery
         angle_to_player = math.degrees(math.atan2(tracey, tracex))
-        hs=0
-        # 通常攻撃：赤いお札を円形に発射
-        if enemy.hp >=4900:
+        
+        current_phase = 0
+        if enemy.hp >= 4900: current_phase = 1
+        elif 4601 <= enemy.hp < 4900: current_phase = 2
+        elif 4351 <= enemy.hp < 4600: current_phase = 3
+        elif 4001 <= enemy.hp < 4350: current_phase = 4
+        elif 3700 <= enemy.hp < 4000: current_phase = 5
+        elif 2800 <= enemy.hp < 3650: current_phase = 6
+        elif 2400 <= enemy.hp < 2750: current_phase = 7
+        elif 1750 <= enemy.hp < 2350: current_phase = 8
+        elif enemy.hp < 1700: current_phase = 9
+
+        # フェーズが変わった瞬間に画面上の弾を消す
+        if enemy.last_phase != current_phase:
+            KillEffect.clear_bullets(enemy_bullets)
+            enemy.last_phase = current_phase
+
+        # 各フェーズの攻撃
+        if current_phase == 1:
             tfmove=0
             h_scale_x=20
             h_scale_y=20
@@ -172,13 +170,8 @@ def main():
                 for i in range(0, 360, h2):
                     b = Bullet(enemy.rect.centerx, enemy.rect.centery, i, 1, "ohuda_navy.png",20,20)
                     all_sprites.add(b); enemy_bullets.add(b)
-            #if frame_count % 15 == 0:
-                #way=5
-                #for i in range (5):
-                    #b=Bullet(enemy.rect.centerx,enemy.rect.centery,angle_to_player,hs,"ohuda_navy.png",h_scale_x,h_scale_y,way,i,15)
-                    #all_sprites.add(b); enemy_bullets.add(b)
-        elif enemy.hp <=4850 and enemy.hp >=4625: 
-            tfmove=0
+        
+        elif current_phase == 2:
             # スペルカード発動：見た目を変える（例えば青いお札や激しい動き）
             hx=r.randint(0,50)
             hs=1
@@ -198,16 +191,15 @@ def main():
                 for i in range (3):
                     b=Bullet(enemy.rect.centerx,enemy.rect.centery,angle_to_player,hs,"ohuda_navy.png",20,20,way,i,interval)
                     all_sprites.add(b); enemy_bullets.add(b)
-        elif enemy.hp>=4400 and enemy.hp<4600:
-            tfmove=0
+        elif current_phase == 3:
             h2=r.randint(5,19)
             hs=r.randint(1,6)
             if frame_count % 20 == 0:
                 for i in range(0, 360, h2):
                     b = Bullet(enemy.rect.centerx, enemy.rect.centery, i, hs, "onnmyou_red.png",90,60)
                     all_sprites.add(b); enemy_bullets.add(b)
-        elif enemy.hp>=4050 and enemy.hp<=4350:
-            tfmove=0
+
+        elif current_phase == 4:
             h_scale_x=20
             h_scale_y=20
             if frame_count % 30 == 0:
@@ -222,8 +214,8 @@ def main():
                     for i in range(0, 360, h2):
                         b = Bullet(enemy.rect.centerx, enemy.rect.centery, i+ha, hs, "ohuda_red.png",h_scale_x,h_scale_y)
                         all_sprites.add(b); enemy_bullets.add(b)
-        elif enemy.hp>=3700 and enemy.hp<=4000:
-            tfmove=0
+
+        elif current_phase == 5:
             h2=r.randint(5,19)
             hs=r.randint(3,8)
             if frame_count % 11 == 0:
@@ -233,8 +225,8 @@ def main():
                 for i in range(0, 360, h2):
                     b = Bullet(enemy.rect.centerx, enemy.rect.centery, i, hs, "ohuda_purple.png",20,20)
                     all_sprites.add(b); enemy_bullets.add(b)
-        elif enemy.hp>=2800 and enemy.hp<=3650:
-            tfmove=0
+
+        elif current_phase == 6:
             h_scale_x=20
             h_scale_y=20
             h1=r.randint(1,2)
@@ -255,8 +247,8 @@ def main():
                 h3=r.randint(1,3)
                 b2 = Bullet(enemy.rect.centerx, enemy.rect.centery, angle*0.3+40, h3, "ohuda_navy.png",h_scale_x,h_scale_y)
                 all_sprites.add(b2); enemy_bullets.add(b2)
-        elif enemy.hp >=2400 and enemy.hp<=2750:
-            tfmove=1
+
+        elif current_phase == 7:
             h_scale_x=20
             h_scale_y=20
             h2=15
@@ -268,7 +260,8 @@ def main():
                 for i in range(0, 360, h2):
                     b = Bullet(hx, hy, i, hs, "ohuda_blue.png",h_scale_x,h_scale_y)
                     all_sprites.add(b); enemy_bullets.add(b)
-        elif enemy.hp >=1750 and enemy.hp <=2350:
+
+        elif current_phase == 8:
             if frame_count % 60 == 0:
                 way = 9
                 interval=15
@@ -312,7 +305,7 @@ def main():
                         elif cy0==1:
                             cy=cy+1
                             cy0=0
-        elif enemy.hp<=1700:
+        elif current_phase == 9:
             img=r.randint(1,13)
             imgp=0
             hx=r.randint(enemy.rect.centerx-50,enemy.rect.centerx+50)
@@ -382,8 +375,6 @@ def main():
                 for i in range(0,360,6):
                     b=Bullet(hx+5,hy+5,i,5,imgp,hex,hey)
                     all_sprites.add(b);enemy_bullets.add(b)
-        
-
 
         all_sprites.update(keys)
 
@@ -400,9 +391,9 @@ def main():
         # 描画
         all_sprites.draw(screen)
         
-        # HPゲージの描画
-        pygame.draw.rect(screen, (255, 0, 0), (50, 20, 500, 10)) # 背景赤
-        pygame.draw.rect(screen, (0, 255, 0), (50, 20, 500 * (enemy.hp / enemy.max_hp), 10)) # 残り緑
+        # HPゲージ
+        pygame.draw.rect(screen, (255, 0, 0), (50, 20, 500, 10))
+        pygame.draw.rect(screen, (0, 255, 0), (50, 20, max(0, 500 * (enemy.hp / enemy.max_hp)), 10))
 
         if keys[pygame.K_LSHIFT]:
             pygame.draw.circle(screen, (255, 255, 255), player.rect.center, player.hit_radius)
@@ -412,6 +403,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-#new
