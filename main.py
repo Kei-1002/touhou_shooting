@@ -20,7 +20,7 @@ class Enemy(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(center=(300, 150))
         self.move_timer = 0
         self.max_hp = 5000
-        self.hp = 5000
+        self.hp = 2600
         self.last_phase = 0  # 弾消し判定用のフェーズ管理
 
 class Bullet(pygame.sprite.Sprite):
@@ -254,7 +254,7 @@ def main():
             h2=15
             hs=2
             hx=r.randint(6,570)
-            hy=r.randint(400,790)
+            hy=r.randint(0,400)
 
             if frame_count % 19 == 0:
                 for i in range(0, 360, h2):
@@ -262,6 +262,17 @@ def main():
                     all_sprites.add(b); enemy_bullets.add(b)
 
         elif current_phase == 8:
+            h_scale_x=20
+            h_scale_y=20
+            h2=15
+            hs=2
+            hx=r.randint(6,570)
+            hy=r.randint(0,400)
+
+            if frame_count % 19 == 0:
+                for i in range(0, 360, h2):
+                    b = Bullet(hx, hy, i, hs, "ohuda_purple.png",h_scale_x,h_scale_y)
+                    all_sprites.add(b); enemy_bullets.add(b)
             if frame_count % 60 == 0:
                 way = 9
                 interval=15
@@ -403,3 +414,8 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+
+
+
