@@ -141,8 +141,8 @@ def main():
         elif 4351 <= enemy.hp < 4700: current_phase = 3
         elif 4001 <= enemy.hp < 4350: current_phase = 4
         elif 3700 <= enemy.hp < 4000: current_phase = 5
-        elif 2800 <= enemy.hp < 3699: current_phase = 6
-        elif 2400 <= enemy.hp < 2799: current_phase = 7
+        elif 3000 <= enemy.hp < 3699: current_phase = 6
+        elif 2400 <= enemy.hp < 2999: current_phase = 7
         elif 1750 <= enemy.hp < 2399: current_phase = 8
         elif enemy.hp < 1749: current_phase = 9
 
