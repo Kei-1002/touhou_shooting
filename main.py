@@ -108,6 +108,7 @@ class PlayerShot(pygame.sprite.Sprite):
 def main():
     pygame.init()
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+    pygame.display.set_caption("東方風弾幕シューティング")
     clock = pygame.time.Clock()
     
     all_sprites = pygame.sprite.Group()
