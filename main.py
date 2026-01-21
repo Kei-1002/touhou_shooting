@@ -137,14 +137,14 @@ def main():
         
         current_phase = 0
         if enemy.hp >= 4900: current_phase = 1
-        elif 4601 <= enemy.hp < 4900: current_phase = 2
-        elif 4351 <= enemy.hp < 4600: current_phase = 3
+        elif 4701 <= enemy.hp < 4900: current_phase = 2
+        elif 4351 <= enemy.hp < 4700: current_phase = 3
         elif 4001 <= enemy.hp < 4350: current_phase = 4
         elif 3700 <= enemy.hp < 4000: current_phase = 5
-        elif 2800 <= enemy.hp < 3650: current_phase = 6
-        elif 2400 <= enemy.hp < 2750: current_phase = 7
-        elif 1750 <= enemy.hp < 2350: current_phase = 8
-        elif enemy.hp < 1700: current_phase = 9
+        elif 2800 <= enemy.hp < 3699: current_phase = 6
+        elif 2400 <= enemy.hp < 2799: current_phase = 7
+        elif 1750 <= enemy.hp < 2399: current_phase = 8
+        elif enemy.hp < 1749: current_phase = 9
 
         # フェーズが変わった瞬間に画面上の弾を消す
         if enemy.last_phase != current_phase:
