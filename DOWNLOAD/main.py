@@ -2,7 +2,6 @@ import pygame
 import math
 import sys
 import random as r
-import os
 
 # --- 設定 ---
 SCREEN_WIDTH, SCREEN_HEIGHT = 600, 800
@@ -14,9 +13,7 @@ class Enemy(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
         try:
-            current_dir = os.path.dirname(os.path.abspath(__file__))
-            image_path = os.path.join(current_dir, "images", "reimu.png")
-            img = pygame.image.load(image_path)
+            img = pygame.image.load("reimu.png").convert_alpha()
             self.image = pygame.transform.scale(img, (64, 64))
         except:
             self.image = pygame.Surface((64, 64)); self.image.fill((255, 0, 0))
@@ -34,9 +31,7 @@ class Bullet(pygame.sprite.Sprite):
         
         if img_file not in Bullet.images:
             try:
-                current_dir = os.path.dirname(os.path.abspath(__file__))
-                image_path = os.path.join(current_dir, "images", img_file)
-                img = pygame.image.load(image_path)
+                img = pygame.image.load(img_file).convert_alpha()
                 Bullet.images[img_file] = pygame.transform.scale(img, (scale_x, scale_y))
             except:
                 Bullet.images[img_file] = pygame.Surface((10, 10))
@@ -73,9 +68,7 @@ class Player(pygame.sprite.Sprite):
     def __init__(self, all_sprites, player_shots):
         super().__init__()
         try:
-            current_dir = os.path.dirname(os.path.abspath(__file__))
-            image_path = os.path.join(current_dir, "images", "marisa.png")
-            img = pygame.image.load(image_path)
+            img = pygame.image.load("marisa.png").convert_alpha()
             self.image = pygame.transform.scale(img, (48, 48))
         except:
             self.image = pygame.Surface((32, 32)); self.image.fill((0, 255, 255))
