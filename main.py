@@ -182,9 +182,7 @@ def main():
                 for i in range(0, 360, h2):
                     b = Bullet(enemy.rect.centerx, enemy.rect.centery, i, 1, "ohuda_navy.png",20,20)
                     all_sprites.add(b); enemy_bullets.add(b)
-        
         elif current_phase == 2:
-            # スペルカード発動：見た目を変える（例えば青いお札や激しい動き）
             hx=r.randint(0,50)
             hs=1
             zx=r.randint(50,100)
