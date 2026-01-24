@@ -23,7 +23,7 @@ class Enemy(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(center=(300, 150))
         self.move_timer = 0
         self.max_hp = 5000
-        self.hp = 5000
+        self.hp = 4600
         self.last_phase = 0  # 弾消し判定用のフェーズ管理
 
 class Bullet(pygame.sprite.Sprite):
@@ -204,7 +204,7 @@ def main():
             hs=r.randint(1,6)
             if frame_count % 20 == 0:
                 for i in range(0, 360, h2):
-                    b = Bullet(enemy.rect.centerx, enemy.rect.centery, i, hs, "onnmyou_red.png",90,60)
+                    b = Bullet(enemy.rect.centerx, enemy.rect.centery, i, hs, "normal.png",40,40)
                     all_sprites.add(b); enemy_bullets.add(b)
 
         elif current_phase == 4:
@@ -257,8 +257,8 @@ def main():
                 all_sprites.add(b2); enemy_bullets.add(b2)
 
         elif current_phase == 7:
-            h_scale_x=20
-            h_scale_y=20
+            h_scale_x=40
+            h_scale_y=40
             h2=15
             hs=2
             hx=r.randint(6,570)
@@ -266,7 +266,7 @@ def main():
 
             if frame_count % 19 == 0:
                 for i in range(0, 360, h2):
-                    b = Bullet(hx, hy, i, hs, "ohuda_blue.png",h_scale_x,h_scale_y)
+                    b = Bullet(hx, hy, i, hs, "big_blue.png",h_scale_x,h_scale_y)
                     all_sprites.add(b); enemy_bullets.add(b)
 
         elif current_phase == 8:
@@ -333,8 +333,8 @@ def main():
             hey=20
             if img==1:
                 imgp="big,png"
-                hex=40
-                hey=40
+                hex=60
+                hey=60
             elif img==2:
                 imgp="daenn.png"
                 hex=20
