@@ -116,6 +116,10 @@ def main():
     pygame.init()
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     pygame.display.set_caption("東方風弾幕シューティング")
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    icon_path = os.path.join(current_dir, "images", "myicon.png")
+    icon=pygame.image.load(icon_path)
+    pygame.display.set_icon(icon)
     clock = pygame.time.Clock()
     
     all_sprites = pygame.sprite.Group()
