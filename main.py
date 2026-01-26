@@ -23,7 +23,7 @@ class Enemy(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(center=(300, 150))
         self.move_timer = 0
         self.max_hp = 5000
-        self.hp = 5000
+        self.hp = 3000
         self.last_phase = 0  # 弾消し判定用のフェーズ管理
 
 class Bullet(pygame.sprite.Sprite):
@@ -206,14 +206,21 @@ def main():
             hs=r.randint(1,6)
             if frame_count % 20 == 0:
                 for i in range(0, 360, h2):
-                    b = Bullet(enemy.rect.centerx, enemy.rect.centery, i, hs, "normal.png",40,40)
+                    b = Bullet(enemy.rect.centerx, enemy.rect.centery, i, hs, "ohuda_navy.png",40,40)
                     all_sprites.add(b); enemy_bullets.add(b)
-
+            if frame_count % 60 == 0:
+                way=3
+                hs = 2
+                interval=8
+                for i in range (3):
+                    b=Bullet(enemy.rect.centerx,enemy.rect.centery,angle_to_player,hs,"kunai.png",30,60,way,i,interval)
+                    all_sprites.add(b); enemy_bullets.add(b)
+#
         elif current_phase == 4:
             h_scale_x=20
             h_scale_y=20
             if frame_count % 30 == 0:
-                for i in range(0, 360, h2):
+                for i in range(20, 120, h2):
                     b = Bullet(enemy.rect.centerx, enemy.rect.centery, i, hs, "ohuda_purple.png",h_scale_x,h_scale_y)
                     all_sprites.add(b); enemy_bullets.add(b)
             if frame_count % 10 == 0:
@@ -221,7 +228,7 @@ def main():
                 hs=1
                 ha=r.randint(1,45)
                 if frame_count % 20 == 0:
-                    for i in range(0, 360, h2):
+                    for i in range(20, 120, h2):
                         b = Bullet(enemy.rect.centerx, enemy.rect.centery, i+ha, hs, "ohuda_red.png",h_scale_x,h_scale_y)
                         all_sprites.add(b); enemy_bullets.add(b)
 
@@ -268,7 +275,7 @@ def main():
 
             if frame_count % 19 == 0:
                 for i in range(0, 360, h2):
-                    b = Bullet(hx, hy, i, hs, "big_blue.png",h_scale_x,h_scale_y)
+                    b = Bullet(hx, hy, i, hs, "ohuda_blue.png",h_scale_x,h_scale_y)
                     all_sprites.add(b); enemy_bullets.add(b)
 
         elif current_phase == 8:
@@ -428,4 +435,4 @@ if __name__ == "__main__":
 
 
 
-
+#
