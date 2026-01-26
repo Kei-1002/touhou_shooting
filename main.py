@@ -23,7 +23,7 @@ class Enemy(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(center=(300, 150))
         self.move_timer = 0
         self.max_hp = 5000
-        self.hp = 5000
+        self.hp = 1600
         self.last_phase = 0  # 弾消し判定用のフェーズ管理
 
 class Bullet(pygame.sprite.Sprite):
@@ -156,7 +156,8 @@ def main():
         elif 3000 <= enemy.hp < 3699: current_phase = 6
         elif 2400 <= enemy.hp < 2999: current_phase = 7
         elif 1750 <= enemy.hp < 2399: current_phase = 8
-        elif enemy.hp < 1749: current_phase = 9
+        elif 1000 <= enemy.hp < 1749: current_phase = 9
+        elif enemy.hp < 999: current_phase = 10
 
         # フェーズが変わった瞬間に画面上の弾を消す
         if enemy.last_phase != current_phase:
@@ -334,6 +335,25 @@ def main():
                             cy=cy+1
                             cy0=0
         elif current_phase == 9:
+            if frame_count % 100 == 0:
+                way=3
+                hs = 2
+                interval=8
+                for i in range (5):
+                    b=Bullet(enemy.rect.centerx,enemy.rect.centery,angle_to_player-8,10,"hishigata.png",45,90,way,i,interval)
+                    all_sprites.add(b); enemy_bullets.add(b)
+            if frame_count % 30 == 0:
+                h2=5
+                for i in range(0, 360, h2):
+                    b = Bullet(enemy.rect.centerx-50, enemy.rect.centery, i, 4, "ohuda_red.png",20,20)
+                    all_sprites.add(b); enemy_bullets.add(b)
+            if frame_count % 45 == 0:
+                h2=5
+                for i in range(0, 360, h2):
+                    b = Bullet(enemy.rect.centerx+50, enemy.rect.centery, i, 4, "ohuda_red.png",20,20)
+                    all_sprites.add(b); enemy_bullets.add(b)
+
+        elif current_phase == 10:
             img=r.randint(1,13)
             imgp=0
             hx=r.randint(enemy.rect.centerx-50,enemy.rect.centerx+50)
@@ -341,9 +361,9 @@ def main():
             hex=20
             hey=20
             if img==1:
-                imgp="big,png"
-                hex=60
-                hey=60
+                imgp="big.png"
+                hex=50
+                hey=50
             elif img==2:
                 imgp="daenn.png"
                 hex=20
@@ -390,13 +410,13 @@ def main():
                 hey=20
             elif img==13:
                 imgp="onnmyou_red.png"
-                hex=20
-                hey=20
+                hex=50
+                hey=25
             else:
                 imgp ="onnmyou_red.png"
-                hex=20
-                hey=20
-            if frame_count % 10==0:
+                hex=50
+                hey=25
+            if frame_count % 37==0:#
                 for i in range(0, 360, 6):
                     b = Bullet(hx, hx, i, 5, imgp,hex,hey)
                     all_sprites.add(b); enemy_bullets.add(b)
