@@ -23,7 +23,7 @@ class Enemy(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(center=(300, 150))
         self.move_timer = 0
         self.max_hp = 5000
-        self.hp = 3000
+        self.hp = 5000
         self.last_phase = 0  # 弾消し判定用のフェーズ管理
 
 class Bullet(pygame.sprite.Sprite):
